@@ -718,14 +718,14 @@ function render(res, meta) {
     if (res.near.length) {
       const msg = info.kind === 'split'
         ? 'This is close to the ' + info.split.lineName + ' dividing line between Region ' + info.split.north + ' and Region ' + info.split.south + '. The line on this map is approximate, so confirm your region with the regional chair before registering.'
-        : 'This is within about ' + res.km + ' km of the border with ' + joinRegions(res.near) + '. County lines on this map are simplified, so confirm your region with the regional chair before registering.';
+        : 'This is within about ' + res.km + ' mi of the border with ' + joinRegions(res.near) + '. County lines on this map are simplified, so confirm your region with the regional chair before registering.';
       wrap.append(h('div', { class:'note' }, h('b', null, 'Near a boundary. '), msg));
     }
-    if (res.chiEdge) wrap.append(h('div', { class:'note' }, h('b', null, 'Near the Chicago city limits. '), 'This is within about 1 km of Chicago. Inside the city, Chicago Public Schools are Region 3 and non-public schools are Region 2.'));
+    if (res.chiEdge) wrap.append(h('div', { class:'note' }, h('b', null, 'Near the Chicago city limits. '), 'This is within about 1 mi of Chicago. Inside the city, Chicago Public Schools are Region 3 and non-public schools are Region 2.'));
   }
   if (ovIds) {
     wrap.append(h('div', { class:'note' }, h('b', null, 'Which one applies? '),
-      'Use the solid region for a public school. Use a striped one if the school is non-public or a Chicago Public School.',
+      'Use the solid region for a public school. Use a striped one if the school is non-public.',
       h('ul', null, ovIds.map(id => h('li', null, h('b', null, 'Region ' + id + ': '), OVERLAYS[id].where)))));
   }
   if (meta && meta.approx) wrap.append(approxNote(meta));
