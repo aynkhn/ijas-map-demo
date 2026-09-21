@@ -46,16 +46,24 @@ a{color:var(--focus)}
 .note b{font-weight:700}
 .note ul{margin:6px 0 0;padding-left:18px}
 .note li+li{margin-top:4px}
-.halves{display:grid;grid-template-columns:repeat(var(--n,2),minmax(0,1fr));gap:8px;margin-top:10px}
-.half{background:#F4F7F9;border-radius:6px;padding:0 9px 9px;overflow:hidden;min-width:0}
-.half::before{content:"";display:block;height:9px;margin:0 -9px 8px;background:var(--bar)}
-.half small{display:block;font-size:12px;line-height:1.25;color:var(--ink2)}
-.half b{display:block;font-size:19px;line-height:1.2;margin-top:2px}
-.half .sn{display:block;font-size:13px;line-height:1.3}
-.half a{display:block;font-size:12px;margin-top:6px;overflow-wrap:anywhere}
-.legend h2+ul+h2{margin-top:16px}
+.kick{margin:0 0 2px;font-size:13px;color:var(--ink2)}
+.where{margin:0 0 10px;font-size:14px;color:var(--ink2)}
+.ask{margin:0 0 8px;font-weight:600}
+.choice{position:relative;background:#F4F7F9;border-radius:6px;padding:9px 10px 9px 20px}
+.choice+.choice{margin-top:8px}
+.choice::before{content:"";position:absolute;left:0;top:0;bottom:0;width:9px;border-radius:6px 0 0 6px;background:var(--bar)}
+.choice p{margin:0}
+.choice .cl{font-size:14px;color:var(--ink2)}
+.choice .cr{margin-top:2px;font-size:16px}
+.choice .cr b{font-size:21px;margin-right:4px}
+.choice a{display:block;margin-top:3px;font-size:13px;overflow-wrap:anywhere}
+.found{margin:12px 0 0;font-size:13px;color:var(--ink2)}
+.found strong{color:var(--ink);font-weight:600}
+.note .small{margin:6px 0 0}
+.sub{margin:0 0 8px;font-size:13px;color:var(--ink2)}
 
-.legend h2{font-size:15px;margin:0 0 8px;font-weight:700}
+.legend h2{font-size:15px;margin:20px 0 8px;font-weight:700}
+.legend h2:first-child{margin-top:0}
 .regs{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .reg{display:flex;gap:9px;align-items:flex-start;width:100%;text-align:left;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:#fff;cursor:pointer}
 .reg:hover{border-color:#9AA9B2}
@@ -122,7 +130,7 @@ svg.has-sel .county.on{stroke:var(--ink);stroke-width:1.2px}
   <aside class="panel">
     <section class="find" aria-labelledby="ttl">
       <h1 id="ttl">Find your IJAS region</h1>
-      <p class="lede">Type a school or home address in Illinois. A city or ZIP code works too.</p>
+      <p class="lede">Enter a school or home address in Illinois.</p>
       <form id="f" autocomplete="off">
         <label for="q">Address, city, or ZIP code</label>
         <div class="row">
@@ -134,22 +142,24 @@ svg.has-sel .county.on{stroke:var(--ink);stroke-width:1.2px}
     </section>
 
     <section class="legend" aria-labelledby="lt">
-      <h2 id="lt">Regions</h2>
+      <h2 id="lt">All regions</h2>
       <ul class="regs" id="regs"></ul>
-      <h2 id="lt2">School-based regions</h2>
+      <h2 id="lt2">Different region for some schools</h2>
+      <p class="sub">Private and parochial schools (and Chicago Public Schools) in some areas use these instead. Tap one to see where.</p>
       <ul class="regs" id="ovregs"></ul>
+      <h2 id="lt3">Reading the map</h2>
       <ul class="keys">
         <li>
           <svg width="26" height="14" aria-hidden="true"><line x1="1" y1="8" x2="25" y2="8" stroke="#16242D" stroke-width="2" stroke-dasharray="6 4"/></svg>
-          <span>Route 20 splits Cook and DuPage (Regions 6 and 9). Route 16 splits Macoupin and Montgomery (Regions 10 and 12). Both lines are approximate.</span>
+          <span>Dashed line: a county split by a road. The line is approximate.</span>
         </li>
         <li>
           <svg width="26" height="14" aria-hidden="true"><defs><pattern id="keystripe" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(0)"><rect width="8" height="3.5" fill="#2A2A2A"/></pattern></defs><rect x="1" y="1" width="24" height="12" rx="2" fill="#fff" stroke="#9AA9B2"/><rect x="1" y="1" width="24" height="12" rx="2" fill="url(#keystripe)"/></svg>
-          <span>Stripes: non-public schools in these counties are Region 11. Public schools use the solid color.</span>
+          <span>Striped county: private and parochial schools use Region 11.</span>
         </li>
         <li>
           <svg width="26" height="14" aria-hidden="true"><defs><pattern id="keychi" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="10" fill="#B0102F"/><rect x="5" width="5" height="10" fill="#2148B8"/></pattern></defs><rect x="1" y="1" width="24" height="12" rx="2" fill="url(#keychi)"/></svg>
-          <span>Two-color fill: the City of Chicago. Chicago Public Schools are Region 3 and non-public schools are Region 2. Outside the city, Cook County follows Regions 6 and 9.</span>
+          <span>Red and blue: the City of Chicago. Chicago Public Schools are Region 3. Private and parochial schools are Region 2.</span>
         </li>
       </ul>
     </section>
@@ -197,15 +207,15 @@ const OVERLAYS = {
   2:  { name:'Chicago Non-Public Schools', short:'City of Chicago', legend:'Chicago non-public',
         kind:'Non-public school', tag:'Non-public', color:'#2148B8', angle:45,
         chair:'John Bobek and Ali Uslu', email:'IJASRegion2@ijas.org',
-        where:'Non-public schools in the City of Chicago.' },
+        where:'Private and parochial (non-public) schools in the City of Chicago.' },
   3:  { name:'Chicago Public Schools (CPS)', short:'City of Chicago', legend:'Chicago Public Schools',
         kind:'Chicago Public School', tag:'CPS', color:'#B0102F', angle:135,
         chair:'Monique Murray and Lucy Young', email:'IJASRegion3@ijas.org',
-        where:'All Chicago Public Schools.' },
+        where:'Chicago Public Schools.' },
   11: { name:'Joliet Area Non-Public Schools', short:'Joliet area', legend:'Joliet-area non-public',
         kind:'Non-public school', tag:'Non-public', color:'#2A2A2A', angle:0,
         chair:'Kathy Winter and Annamarie Boyle', email:'IJASRegion11@ijas.org',
-        where:'Parochial and private schools in DuPage, Grundy, Kankakee, Kendall and Will Counties.' }
+        where:'Private and parochial (non-public) schools in DuPage, Grundy, Kankakee, Kendall and Will Counties.' }
 };
 const OVERLAY_DRAW = { DuPage:[11], Will:[11], Grundy:[11], Kankakee:[11], Kendall:[11] };
 const OVERLAY_BY_COUNTY = OVERLAY_DRAW;
@@ -646,17 +656,17 @@ function regionHead(id) {
 }
 function showEmpty() {
   lastResult = null; detail.textContent = '';
-  detail.append(h('p', { class:'empty' }, 'Enter an address, city, or ZIP code, or click the map to check a spot. Pick a region below to highlight it.'));
+  detail.append(h('p', { class:'empty' }, 'Search above, or click the map to check a spot. Tap a region in the list to highlight it.'));
 }
 function showRegion(id) {
   detail.textContent = '';
   if (OVERLAYS[id]) {
     const o = OVERLAYS[id];
-    const drawn = Object.keys(OVERLAY_DRAW).filter(c => OVERLAY_DRAW[c].includes(id)).sort();
-    if (CITY_OVERLAYS.includes(id)) drawn.unshift('City of Chicago');
     detail.append(h('div', { class:'region', style:'--c:' + o.color }, h('h2', null, 'Region ' + id), h('p', { class:'rname' }, o.name),
-      h('p', { class:'meta' }, o.where),
-      h('p', { class:'meta' }, h('strong', null, 'On the map: '), drawn.join(', ') + (CITY_OVERLAYS.includes(id) ? '.' : '. Public schools there use the solid region color.')),
+      h('p', { class:'meta' }, 'Applies to: ' + o.where),
+      h('p', { class:'meta' }, CITY_OVERLAYS.includes(id)
+        ? 'Shown on the map as the red and blue area.'
+        : 'Public schools in those counties use the region shown in solid color.'),
       contact(o)));
     return;
   }
@@ -668,67 +678,54 @@ function showMessage(text, err) {
   lastResult = null; detail.textContent = '';
   detail.append(h('div', { class:'note' + (err ? ' err' : '') }, text));
 }
-function approxNote(meta) {
-  return h('div', { class:'note' }, h('b', null, 'Approximate. '),
-    (meta.why ? meta.why + ', so this' : 'This') + ' uses ' + meta.what + ', not the exact spot. Enter a full street address, or click the map, for an exact result.');
-}
 function joinRegions(ids) { return ids.map(i => 'Region ' + i).join(' and '); }
 
-function half(kind, id) {
+// Wording for "it depends on the school" answers.
+const CHOICE = { pub:'If it\u2019s a public school', np:'If it\u2019s a private or parochial school', cps:'If it\u2019s a Chicago Public School' };
+function choice(label, id) {
   const o = OVERLAYS[id] || REGIONS[id];
   const bar = OVERLAYS[id] ? 'repeating-linear-gradient(' + o.angle + 'deg,' + o.color + ' 0 4px,#fff 4px 8px)' : o.color;
-  return h('div', { class:'half', style:'--bar:' + bar }, h('small', null, kind), h('b', null, 'Region ' + id),
-    h('span', { class:'sn' }, o.short || o.name), h('a', { href:'mailto:' + o.email }, o.email));
+  return h('div', { class:'choice', style:'--bar:' + bar },
+    h('p', { class:'cl' }, label),
+    h('p', { class:'cr' }, h('b', null, 'Region ' + id), o.legend || o.name),
+    h('a', { href:'mailto:' + o.email }, o.email));
 }
+const placeLine = t => h('p', { class:'where' }, t);
+const askLine = () => h('p', { class:'ask' }, 'Your region depends on the school.');
 
 function render(res, meta) {
-  const info = res.info;
+  const info = res.info, cautions = [];
   detail.textContent = '';
   const wrap = h('div');
   const ovIds = res.chicago ? null : OVERLAY_BY_COUNTY[info.county];
+
   if (res.chicago) {
-    wrap.append(h('div', null, h('p', { class:'meta' }, h('strong', null, 'Located in: '), 'City of Chicago'),
-      meta && meta.label ? h('p', { class:'meta' }, h('strong', null, 'Matched: '), meta.label + (meta.source ? ' (' + meta.source + ')' : '')) : null),
-      h('div', { class:'halves', style:'--n:2' }, CITY_OVERLAYS.map(id => half(OVERLAYS[id].kind, id))));
-    if (res.chiEdge) wrap.append(h('div', { class:'note' }, h('b', null, 'Near the city limits. '), 'This is within about 1 km of the edge of Chicago. Outside the city, a school follows the county regions instead (Region 6 north of Route 20, Region 9 south). Confirm with the regional chair if you\u2019re close to the line.'));
-    wrap.append(h('div', { class:'note' }, h('b', null, 'Which one applies? '), 'Chicago Public Schools are Region 3. Non-public schools in the city are Region 2.'));
-    if (meta && meta.approx) wrap.append(approxNote(meta));
-    detail.append(wrap);
-    return;
-  }
-  if (info.region == null) {
-    const [a, b] = info.options, s = info.split;
-    wrap.append(h('div', { class:'region', style:'--c:#16242D' },
-      h('h2', null, 'Region ' + a + ' or ' + b),
-      h('p', { class:'rname' }, info.county + ' County'),
-      h('p', { class:'meta' }, 'This county is split by ' + s.lineName + ': Region ' + a + ' (' + REGIONS[a].name + ') to the north and Region ' + b + ' (' + REGIONS[b].name + ') to the south.'),
-      h('p', { class:'contact' }, 'Check which side of ' + s.lineName + ' the school is on. If you can\u2019t tell, ask the chairs: ',
-        h('a', { href:'mailto:' + REGIONS[a].email }, REGIONS[a].email), ' or ', h('a', { href:'mailto:' + REGIONS[b].email }, REGIONS[b].email), '.')));
+    wrap.append(placeLine('City of Chicago'), askLine(), choice(CHOICE.cps, 3), choice(CHOICE.np, 2));
+    if (res.chiEdge) cautions.push('This is close to the Chicago city limits. Outside the city, the region follows the county (Region 6 or 9).');
+  } else if (info.region == null) {
+    const a = info.options[0], b = info.options[1], ln = info.split.lineName;
+    wrap.append(placeLine(info.county + ' County'), h('p', { class:'ask' }, 'This county is split by ' + ln + '. Your region depends on which side of the road the school is on.'),
+      choice('North of ' + ln, a), choice('South of ' + ln, b));
   } else {
     const r = REGIONS[info.region];
-    const where = info.kind === 'split' ? info.county + ' County, ' + info.side + ' of ' + info.split.lineName : info.county + ' County';
-    const metas = [h('p', { class:'meta' }, h('strong', null, 'Located in: '), where),
-      meta && meta.label ? h('p', { class:'meta' }, h('strong', null, 'Matched: '), meta.label + (meta.source ? ' (' + meta.source + ')' : '')) : null];
+    const where = info.kind === 'split' ? info.county + ' County (' + info.side + ' of ' + info.split.lineName + ')' : info.county + ' County';
     if (ovIds) {
-      const halves = [half('Public school', info.region)].concat(ovIds.map(id => half(OVERLAYS[id].kind, id)));
-      wrap.append(h('div', null, metas), h('div', { class:'halves', style:'--n:' + halves.length }, halves));
+      wrap.append(placeLine(where), askLine(), choice(CHOICE.pub, info.region), ...ovIds.map(id => choice(CHOICE.np, id)));
     } else {
-      wrap.append(h('div', { class:'region', style:'--c:' + r.color }, regionHead(info.region), metas, contact(r)));
+      wrap.append(h('div', { class:'region', style:'--c:' + r.color },
+        h('p', { class:'kick' }, 'Your region'), h('h2', null, 'Region ' + info.region), h('p', { class:'rname' }, r.name), placeLine(where), contact(r)));
     }
-    if (res.near.length) {
-      const msg = info.kind === 'split'
-        ? 'This is close to the ' + info.split.lineName + ' dividing line between Region ' + info.split.north + ' and Region ' + info.split.south + '. The line on this map is approximate, so confirm your region with the regional chair before registering.'
-        : 'This is within about ' + res.km + ' mi of the border with ' + joinRegions(res.near) + '. County lines on this map are simplified, so confirm your region with the regional chair before registering.';
-      wrap.append(h('div', { class:'note' }, h('b', null, 'Near a boundary. '), msg));
-    }
-    if (res.chiEdge) wrap.append(h('div', { class:'note' }, h('b', null, 'Near the Chicago city limits. '), 'This is within about 1 mi of Chicago. Inside the city, Chicago Public Schools are Region 3 and non-public schools are Region 2.'));
+    if (res.near.length) cautions.push(info.kind === 'split'
+      ? 'This is close to the ' + info.split.lineName + ' line between Region ' + info.split.north + ' and Region ' + info.split.south + ', and that line is approximate.'
+      : 'This is close to the border with ' + joinRegions(res.near) + ', and the map\u2019s county lines are simplified.');
+    if (res.chiEdge) cautions.push('This is close to the Chicago city limits. Inside the city, Chicago Public Schools are Region 3 and private or parochial schools are Region 2.');
   }
-  if (ovIds) {
-    wrap.append(h('div', { class:'note' }, h('b', null, 'Which one applies? '),
-      'Use the solid region for a public school. Use a striped one if the school is non-public.',
-      h('ul', null, ovIds.map(id => h('li', null, h('b', null, 'Region ' + id + ': '), OVERLAYS[id].where)))));
-  }
-  if (meta && meta.approx) wrap.append(approxNote(meta));
+  if (meta && meta.approx) cautions.unshift((meta.why ? meta.why + '. ' : '') + 'This is based on ' + meta.what + ', not your exact address.');
+
+  if (meta && meta.label) wrap.append(h('p', { class:'found' }, h('strong', null, 'Found: '), meta.label + (meta.source ? ' (' + meta.source + ')' : '')));
+  if (cautions.length) wrap.append(h('div', { class:'note' }, h('b', null, 'Worth double-checking. '),
+    cautions.length === 1 ? cautions[0] : h('ul', null, cautions.map(c => h('li', null, c))),
+    h('p', { class:'small' }, 'Not sure? Email the regional chair.')));
   detail.append(wrap);
 }
 
